@@ -4,8 +4,6 @@ import {
     flexRender,
     getCoreRowModel,
     useReactTable,
-    getFilteredRowModel,
-    getSortedRowModel,
 } from "@tanstack/react-table";
 import { useEffect, useReducer, useState, useMemo, useCallback, ChangeEvent } from "react";
 
@@ -51,7 +49,6 @@ const Page = () => {
     const [tableData, setTableData] = useState<DataRow[]>([]);
     const [slug, setSlug] = useState("");
     const [completionStates, setCompletionStates] = useState<string[]>([]);
-    const [globalFilter, setGlobalFilter] = useState("");
 
     const handleCheckboxChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, id: string) => {
         const isChecked = event.target.checked;
@@ -124,27 +121,14 @@ const Page = () => {
     const table = useReactTable({
         data: tableData,
         columns,
-        state: {
-            sorting: [],
-            globalFilter,
-        },
-        onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
     });
 
-    function hhandleGlobalFilterChange(event: ChangeEvent<HTMLInputElement>): void {
-        setGlobalFilter(event.target.value);
-    }
+
 
     return (
         <div>
-            <input
-                value={globalFilter ?? ""}
-                onChange={hhandleGlobalFilterChange}
-                placeholder="Search all columns..."
-            />
+
             <table>
                 <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -152,19 +136,14 @@ const Page = () => {
                             {headerGroup.headers.map((header) => (
                                 <th
                                     key={header.id}
-                                    onClick={header.column.getToggleSortingHandler()}
-                                    style={{
-                                        cursor: header.column.getCanSort() ? "pointer" : undefined,
-                                    }}
+
+
                                 >
                                     {flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
                                     )}
-                                    {{
-                                        asc: " 🔼",
-                                        desc: " 🔽",
-                                    }[header.column.getIsSorted() || 'asc'] ?? null}
+
                                 </th>
                             ))}
                         </tr>
